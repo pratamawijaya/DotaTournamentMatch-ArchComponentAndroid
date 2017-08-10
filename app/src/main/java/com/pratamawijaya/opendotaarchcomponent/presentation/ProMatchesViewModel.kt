@@ -1,6 +1,7 @@
 package com.pratamawijaya.opendotaarchcomponent.presentation
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.pratamawijaya.opendotaarchcomponent.BaseApp
 import com.pratamawijaya.opendotaarchcomponent.data.repository.matches.MatchesRepository
@@ -22,7 +23,10 @@ class ProMatchesViewModel : ViewModel() {
     }
 
     fun getProMatchesData(): LiveData<List<Matches>>? {
-        liveMatchesData = matchesRepo.getProMatches()
+        if (liveMatchesData == null) {
+            liveMatchesData = MutableLiveData<List<Matches>>()
+            liveMatchesData = matchesRepo.getProMatches()
+        }
         return liveMatchesData
     }
 
