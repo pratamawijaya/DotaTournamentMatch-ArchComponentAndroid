@@ -3,6 +3,7 @@ package com.pratamawijaya.opendotaarchcomponent.presentation
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.github.ajalt.timberkt.d
 import com.pratamawijaya.opendotaarchcomponent.BaseApp
 import com.pratamawijaya.opendotaarchcomponent.data.repository.matches.MatchesRepository
 import com.pratamawijaya.opendotaarchcomponent.domain.Matches
@@ -19,18 +20,19 @@ class ProMatchesViewModel : ViewModel() {
     private var liveMatchesData: LiveData<List<Matches>>? = null
 
     init {
-        initDagger()
+        BaseApp.appComponent.inject(this)
     }
 
-    fun getProMatchesData(): LiveData<List<Matches>>? {
+    fun getProMatchesData(): LiveData<List<Matches>> {
         if (liveMatchesData == null) {
             liveMatchesData = MutableLiveData<List<Matches>>()
             liveMatchesData = matchesRepo.getProMatches()
         }
-        return liveMatchesData
+        return liveMatchesData as LiveData<List<Matches>>
     }
 
-    private fun initDagger() {
-        BaseApp.appComponent.inject(this)
+    override fun onCleared() {
+        super.onCleared()
+        d { "vm cleared" }
     }
 }
