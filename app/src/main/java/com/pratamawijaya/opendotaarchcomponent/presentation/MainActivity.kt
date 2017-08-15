@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import com.github.ajalt.timberkt.d
 import com.github.nitrico.lastadapter.LastAdapter
 import com.pratamawijaya.opendotaarchcomponent.BR
 import com.pratamawijaya.opendotaarchcomponent.R
@@ -26,11 +25,6 @@ class MainActivity : LifecycleActivity() {
         rvMatches = findViewById(R.id.rvMatches)
         rvMatches.layoutManager = LinearLayoutManager(this)
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        d { "onResume" }
         proMatchesVM.getProMatchesData().observe(this, Observer {
             result ->
             LastAdapter(result!!, BR.matches)
@@ -38,5 +32,4 @@ class MainActivity : LifecycleActivity() {
                     .into(rvMatches)
         })
     }
-
 }
