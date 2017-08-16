@@ -1,35 +1,51 @@
 package com.pratamawijaya.opendotaarchcomponent.presentation
 
-import android.arch.lifecycle.LifecycleActivity
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import com.github.ajalt.timberkt.d
 import com.github.nitrico.lastadapter.LastAdapter
 import com.pratamawijaya.opendotaarchcomponent.BR
 import com.pratamawijaya.opendotaarchcomponent.R
 import com.pratamawijaya.opendotaarchcomponent.domain.Matches
+import com.pratamawijaya.opendotaarchcomponent.presentation.base.BaseLifecycleActivity
+import com.pratamawijaya.opendotaarchcomponent.unsafeLazy
+import org.jetbrains.anko.toast
 
-class MainActivity : LifecycleActivity() {
+class MainActivity : BaseLifecycleActivity<ProMatchesViewModel>() {
 
-    private lateinit var proMatchesVM: ProMatchesViewModel
-    private lateinit var rvMatches: RecyclerView
+    private val rv by unsafeLazy { findViewById<RecyclerView>(R.id.rvMatches) }
+    private val refresh by unsafeLazy { findViewById<SwipeRefreshLayout>(R.id.refreshLayout) }
+
+    override val viewModelClass = ProMatchesViewModel::class.java
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        proMatchesVM = ViewModelProviders.of(this).get(ProMatchesViewModel::class.java)
-
-        rvMatches = findViewById(R.id.rvMatches)
-        rvMatches.layoutManager = LinearLayoutManager(this)
-
-        proMatchesVM.getProMatchesData().observe(this, Observer {
-            result ->
-            LastAdapter(result!!, BR.matches)
-                    .map<Matches>(R.layout.layout_item_matches)
-                    .into(rvMatches)
-        })
+        rv.layoutManager = LinearLayoutManager(this)
+        observeLiveData()
     }
+
+    private fun observeLiveData() {
+        viewModel.isLoadingLiveData.observe(this, Observer {
+            it?.let {
+                d { "is refresh $it" }
+                refresh.isRefreshing = it
+            }
+        })
+
+        viewModel.reposLiveData.observe(this, Observer {
+            LastAdapter(it!!, BR.matchesLiveData)
+                    .map<Matches>(R.layout.layout_item_matches)
+                    .into(rv)
+        })
+
+        viewModel.throwableLiveData.observe(this, Observer {
+            toast("error ${it?.localizedMessage}")
+        })
+
+    }
+
 }

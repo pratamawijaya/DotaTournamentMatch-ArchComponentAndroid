@@ -6,7 +6,7 @@
     <data>
 
         <variable
-            name="matches"
+            name="matchesLiveData"
             type="com.pratamawijaya.opendotaarchcomponent.domain.Matches" />
     </data>
 
@@ -36,7 +36,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:text="@{matches.id.toString()}"
+            android:text="@{matchesLiveData.id.toString()}"
             app:layout_constraintBottom_toTopOf="@+id/textView3"
             app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -49,7 +49,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:text="@{matches.leagueName}"
+            android:text="@{matchesLiveData.leagueName}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3"
@@ -63,7 +63,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
-            android:text="@{matches.radiantName}"
+            android:text="@{matchesLiveData.radiantName}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -76,7 +76,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:text="@{matches.direName}"
+            android:text="@{matchesLiveData.direName}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"

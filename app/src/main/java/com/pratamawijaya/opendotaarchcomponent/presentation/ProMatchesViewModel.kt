@@ -1,10 +1,11 @@
 package com.pratamawijaya.opendotaarchcomponent.presentation
 
-import android.arch.lifecycle.LiveData
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import com.github.ajalt.timberkt.d
 import com.pratamawijaya.opendotaarchcomponent.BaseApp
+import com.pratamawijaya.opendotaarchcomponent.data.repository.matches.MatchesRepoLiveData
 import com.pratamawijaya.opendotaarchcomponent.data.repository.matches.MatchesRepository
 import com.pratamawijaya.opendotaarchcomponent.domain.Matches
 import javax.inject.Inject
@@ -12,27 +13,32 @@ import javax.inject.Inject
 /**
  * Created by pratama on 8/10/17.
  */
-class ProMatchesViewModel : ViewModel() {
+class ProMatchesViewModel constructor(application: Application) : AndroidViewModel(application) {
 
     @Inject
     lateinit var matchesRepo: MatchesRepository
-
-    private var liveMatchesData: LiveData<List<Matches>>? = null
 
     init {
         BaseApp.appComponent.inject(this)
     }
 
-    fun getProMatchesData(): LiveData<List<Matches>> {
-        if (liveMatchesData == null) {
-            liveMatchesData = MutableLiveData<List<Matches>>()
-            liveMatchesData = matchesRepo.getProMatches()
-        }
-        return liveMatchesData as LiveData<List<Matches>>
+    private val matchesLiveData = MutableLiveData<List<Matches>>()
+
+
+    val resultLiveData = MatchesRepoLiveData(matchesRepo).apply {
+        this.addSource(matchesLiveData, null)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        d { "vm cleared" }
+    val isLoadingLiveData = MediatorLiveData<Boolean>().apply {
+        this.addSource(resultLiveData) { this.value = false }
     }
+
+    val throwableLiveData = MediatorLiveData<Throwable>().apply {
+        this.addSource(resultLiveData) { it?.second?.let { this.value = it } }
+    }
+
+    val reposLiveData = MediatorLiveData<List<Matches>>().apply {
+        this.addSource(resultLiveData) { it?.first?.let { this.value = it } }
+    }
+
 }
